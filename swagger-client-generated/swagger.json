@@ -1,0 +1,286 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "# What is the Bandsintown API?\nThe Bandsintown API is designed for enterprise partners and artists with websites, media players, and/or mobile applications that would like to list an artist's events and provide their users with the ability to buy tickets and RSVP to these events.\n\nIt offers read-only access to artist info and artist events:\n- artist info: returns the link to the Bandsintown artist page, the link to the artist photo, the current number of trackers and more\n- artist events: returns the list of events including their date and time, venue name and location, ticket links, lineup, description and the link to the Bandsintown event page\n\nNote you can specify if you only want to return upcoming events, past events, all events, or events within a given date range.\n\n# Getting Started\n- In order to use the Bandsintown API, you must have written consent from Bandsintown Inc. Any other use of the Bandsintown API is prohibited. [Contact Bandsintown](http://help.bandsintown.com/) to tell us what you plan to do and request your personal application ID.\n- Find out about the API methods available and the format of the API responses below. Select the method you wish to use and try it out online with the app ID provided to you.\n- Call our Bandsintown API with the app ID provided straight from your website or back-end platform and choose which element of the API response you wish to display. Scroll to the bottom of this page to find out about the Models used.\n",
+    "version" : "3.0.0",
+    "title" : "Bandsintown API",
+    "contact" : {
+      "name" : "Bandsintown",
+      "url" : "https://bandsintown.com/"
+    },
+    "license" : {
+      "name" : "Terms and Conditions",
+      "url" : "http://corp.bandsintown.com/api-terms/"
+    }
+  },
+  "host" : "rest.bandsintown.com",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/artists/{artistname}" : {
+      "get" : {
+        "tags" : [ "artist information" ],
+        "summary" : "Get artist information",
+        "description" : "Get artist information\n",
+        "operationId" : "artist",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "artistname",
+          "in" : "path",
+          "description" : "The name of the artist. If it contains one of the special characters below, please be sure to replace it by the corresponding code: for / use %252F, for ? use %253F, for * use %252A, and for \" use %27C",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "app_id",
+          "in" : "query",
+          "description" : "The application ID assigned to you by Bandsintown",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/ArtistData"
+            }
+          }
+        }
+      }
+    },
+    "/artists/{artistname}/events" : {
+      "get" : {
+        "tags" : [ "artist events" ],
+        "summary" : "Get upcoming, past, or all artist events, or events within a date range",
+        "description" : "artist events\n",
+        "operationId" : "artistEvents",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "artistname",
+          "in" : "path",
+          "description" : "The name of the artist. If it contains one of the special characters below, please be sure to replace it by the corresponding code: for / use %252F, for ? use %253F, for * use %252A, and for \" use %27C",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "app_id",
+          "in" : "query",
+          "description" : "The application ID assigned to you by Bandsintown",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "date",
+          "in" : "query",
+          "description" : "Can be one of the following values: \"upcoming\", \"past\", \"all\", or a date range e.g. \"2015-05-05,2017-05-05\". If not specified, only upcoming shows are returned",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Shows within a date range for the selected artist",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EventData"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "ArtistData" : {
+      "type" : "object",
+      "required" : [ "facebook_page_url", "image_url", "mbid", "name", "thumb_url", "tracker_count", "upcoming_event_count", "url" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 510
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Maroon 5"
+        },
+        "url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "http://www.bandsintown.com/Maroon5?came_from=67"
+        },
+        "image_url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "https://s3.amazonaws.com/bit-photos/large/7481529.jpeg"
+        },
+        "thumb_url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "https://s3.amazonaws.com/bit-photos/thumb/7481529.jpeg"
+        },
+        "facebook_page_url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "https://www.facebook.com/maroon5"
+        },
+        "mbid" : {
+          "type" : "string",
+          "example" : "0ab49580-c84f-44d4-875f-d83760ea2cfe"
+        },
+        "tracker_count" : {
+          "type" : "integer"
+        },
+        "upcoming_event_count" : {
+          "type" : "integer"
+        }
+      },
+      "example" : {
+        "thumb_url" : "https://s3.amazonaws.com/bit-photos/thumb/7481529.jpeg",
+        "mbid" : "0ab49580-c84f-44d4-875f-d83760ea2cfe",
+        "facebook_page_url" : "https://www.facebook.com/maroon5",
+        "image_url" : "https://s3.amazonaws.com/bit-photos/large/7481529.jpeg",
+        "name" : "Maroon 5",
+        "id" : 510,
+        "tracker_count" : 0,
+        "upcoming_event_count" : 6,
+        "url" : "http://www.bandsintown.com/Maroon5?came_from=67"
+      }
+    },
+    "EventData" : {
+      "type" : "object",
+      "required" : [ "artist_id", "datetime", "id", "lineup", "offers", "on_sale_datetime", "url", "venue" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "integer",
+          "example" : "13722599"
+        },
+        "artist_id" : {
+          "type" : "string",
+          "format" : "integer",
+          "example" : "438314"
+        },
+        "url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "http://www.bandsintown.com/event/13722599?app_id=foo&artist=Skrillex&came_from=67"
+        },
+        "on_sale_datetime" : {
+          "type" : "string",
+          "format" : "datetime",
+          "example" : "2017-03-01T18:00:00"
+        },
+        "datetime" : {
+          "type" : "string",
+          "format" : "datetime",
+          "example" : "2017-03-19T11:00:00"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "This is a description"
+        },
+        "venue" : {
+          "$ref" : "#/definitions/VenueData"
+        },
+        "offers" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/OfferData"
+          }
+        },
+        "lineup" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      },
+      "example" : {
+        "offers" : [ {
+          "type" : "Tickets",
+          "url" : "http://www.bandsintown.com/event/13722599/buy_tickets?app_id=foo&artist=Skrillex&came_from=67",
+          "status" : "available"
+        }, {
+          "type" : "Tickets",
+          "url" : "http://www.bandsintown.com/event/13722599/buy_tickets?app_id=foo&artist=Skrillex&came_from=67",
+          "status" : "available"
+        } ],
+        "venue" : {
+          "country" : "United States",
+          "city" : "Las Vegas",
+          "latitude" : "36.12714",
+          "name" : "Encore Beach Club",
+          "region" : "NV",
+          "longitude" : "-115.1629562"
+        },
+        "datetime" : "2017-03-19T11:00:00",
+        "on_sale_datetime" : "2017-03-01T18:00:00",
+        "description" : "This is a description",
+        "lineup" : [ "lineup", "lineup" ],
+        "id" : "13722599",
+        "artist_id" : "438314",
+        "url" : "http://www.bandsintown.com/event/13722599?app_id=foo&artist=Skrillex&came_from=67"
+      }
+    },
+    "VenueData" : {
+      "type" : "object",
+      "required" : [ "city", "country", "latitude", "longitude", "name", "region" ],
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "example" : "Encore Beach Club"
+        },
+        "latitude" : {
+          "type" : "string",
+          "format" : "double",
+          "example" : "36.12714"
+        },
+        "longitude" : {
+          "type" : "string",
+          "format" : "double",
+          "example" : "-115.1629562"
+        },
+        "city" : {
+          "type" : "string",
+          "example" : "Las Vegas"
+        },
+        "region" : {
+          "type" : "string",
+          "example" : "NV"
+        },
+        "country" : {
+          "type" : "string",
+          "example" : "United States"
+        }
+      },
+      "example" : {
+        "country" : "United States",
+        "city" : "Las Vegas",
+        "latitude" : "36.12714",
+        "name" : "Encore Beach Club",
+        "region" : "NV",
+        "longitude" : "-115.1629562"
+      }
+    },
+    "OfferData" : {
+      "type" : "object",
+      "required" : [ "status", "type", "url" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "example" : "Tickets"
+        },
+        "url" : {
+          "type" : "string",
+          "format" : "url",
+          "example" : "http://www.bandsintown.com/event/13722599/buy_tickets?app_id=foo&artist=Skrillex&came_from=67"
+        },
+        "status" : {
+          "type" : "string",
+          "example" : "available"
+        }
+      },
+      "example" : {
+        "type" : "Tickets",
+        "url" : "http://www.bandsintown.com/event/13722599/buy_tickets?app_id=foo&artist=Skrillex&came_from=67",
+        "status" : "available"
+      }
+    }
+  }
+}
