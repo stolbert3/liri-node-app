@@ -8,7 +8,31 @@ var Spotify = require('node-spotify-api');
 var userCommand = process.argv[2];
 
 if (userCommand === "concert-this") {
-    //https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp
+    var artistName = '';
+    for (i = 3; i < (process.argv.length - 1); i++) {
+        artistName = process.argv[i] + "+"
+    }
+    var lastWord = process.argv.length - 1;
+    artistName += process.argv[lastWord];
+    
+    request("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp", function(error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+            var concertInfo = JSON.parse(body)
+            for (i = 0; i < concertInfo.length; i++) {
+                var thisConcert = concertInfo[i];
+                var venue = thisConcert.venue.name;
+                var location = (thisConcert.venue.city) + " " + (thisConcert.venue.region);
+                var date = thisConcert.datetime;
+                
+                console.log("-------------------------")
+                console.log("VENUE: " + venue);
+                console.log("LOCATION: " + location);
+                console.log("DATE: " + date);
+                console.log("-------------------------")
+            }
+        }
+    })
     //name of the venue
     //venue location
     //date of the event (use moment to format as mm/dd/yyyy)
@@ -54,17 +78,6 @@ else if (userCommand === "movie-this") {
         }
     
     });
-      
-    //search omdb (key = trilogy)
-    //title of the movie
-    //year the movie came out
-    //imdb rating
-    //rotten tomatoes rating
-    //country where the movie was produced
-    //language of the movie
-    //plot of the movie
-    //actors in the movie
-    //no movie entered = output data for "Mr. Nobody"
 }
 else if (userCommand === "do-what-it-says") {
     fs.readFile("random.txt", "utf8", function(error, data) {
