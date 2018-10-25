@@ -3,6 +3,7 @@ require('dotenv').config();
 var keys = require("./keys.js")
 var request = require("request");
 var fs = require("fs");
+var moment = require("moment");
 var Spotify = require('node-spotify-api');
 
 var userCommand = process.argv[2];
@@ -23,7 +24,7 @@ if (userCommand === "concert-this") {
                 var thisConcert = concertInfo[i];
                 var venue = thisConcert.venue.name;
                 var location = (thisConcert.venue.city) + " " + (thisConcert.venue.region);
-                var date = thisConcert.datetime;
+                var date = moment(thisConcert.datetime, "YYYY-MM-DD").format("MM/DD/YYYY");
                 
                 console.log("-------------------------")
                 console.log("VENUE: " + venue);
