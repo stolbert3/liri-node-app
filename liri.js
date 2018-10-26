@@ -42,7 +42,11 @@ function spotifyQueue(queryTerm) {
     //album that the song is from
     //if no song is provided, program will default to "The Sign" by Ace of Base
 
-    var spotify = new Spotify(keys.spotify);
+    var spotify = new Spotify({
+        id: keys.spotify.id,
+        secret: keys.spotify.secret
+    });
+
     spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
@@ -118,8 +122,7 @@ else if (userCommand === "do-what-it-says") {
             concertQueue(concertPull);
         }
         else if (commandArr[0] === "spotify-this-song") {
-            var spotifyPull = userInput.split(" ").join("+");
-            spotifyQueue(spotifyPull);
+            spotifyQueue(commandArr[1]);
         }
         else if (commandArr[0] === "movie-this") {
             var moviePull = userInput.split(" ").join("+");
