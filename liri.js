@@ -11,6 +11,8 @@ var artistName = '';
 var queryTerm = '';
 var movieTitle = '';
 
+//------------FUNCTIONS------------//
+
 function concertQueue(artistName) {
     
     request("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp", function(error, response, body) {
@@ -68,6 +70,8 @@ function movieQueue(movieTitle) {
     
     });
 }
+
+//------------CALLS A SPECIFIC FUNCTION BASED ON USER INPUT------------//
 
 if (userCommand === "concert-this") {
     for (i = 3; i < (process.argv.length - 1); i++) {
