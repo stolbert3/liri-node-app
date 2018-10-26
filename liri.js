@@ -7,14 +7,11 @@ var moment = require("moment");
 var Spotify = require('node-spotify-api');
 
 var userCommand = process.argv[2];
+var artistName = '';
+var queryTerm = '';
+var movieTitle = '';
 
-if (userCommand === "concert-this") {
-    var artistName = '';
-    for (i = 3; i < (process.argv.length - 1); i++) {
-        artistName = process.argv[i] + "+"
-    }
-    var lastWord = process.argv.length - 1;
-    artistName += process.argv[lastWord];
+function concertQueue(artistName) {
     
     request("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp", function(error, response, body) {
 
@@ -34,14 +31,15 @@ if (userCommand === "concert-this") {
             }
         }
     })
-    //name of the venue
-    //venue location
-    //date of the event (use moment to format as mm/dd/yyyy)
 }
-else if (userCommand === "spotify-this-song") {
-    //return artist(s), song's name, preview link of the song from spotify, album that the song is from
+
+function spotifyQueue(queryTerm) {
+    //artist(s)
+    //song's name
+    //preview link of the song from spotify
+    //album that the song is from
     //if no song is provided, program will default to "The Sign" by Ace of Base
-    //utilize node spotify api
+
     var spotify = new Spotify(keys.spotify);
     spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
         if (err) {
@@ -50,18 +48,8 @@ else if (userCommand === "spotify-this-song") {
         console.log(data); 
     });
 }
-else if (userCommand === "movie-this") {
-    var movieTitle = '';
-    if (process.argv.length < 4) {
-        movieTitle = "mr+nobody";
-    }
-    else {
-        for (i = 3; i < (process.argv.length - 1); i++) {
-            movieTitle = process.argv[i] + "+"
-        }
-        var lastWord = process.argv.length - 1;
-        movieTitle += process.argv[lastWord];
-    }
+
+function movieQueue(movieTitle) {
 
     request("http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
 
@@ -80,12 +68,58 @@ else if (userCommand === "movie-this") {
     
     });
 }
+
+if (userCommand === "concert-this") {
+    for (i = 3; i < (process.argv.length - 1); i++) {
+        artistName = process.argv[i] + "+"
+    }
+    var lastWord = process.argv.length - 1;
+    artistName += process.argv[lastWord];
+
+    concertQueue(artistName);
+}
+else if (userCommand === "spotify-this-song") {
+    if (process.argv.length < 4) {
+        queryTerm = 'The Sign';
+    }
+    else {
+        queryTerm = process.argv[3];
+    };
+
+    spotifyQueue(queryTerm);
+}
+else if (userCommand === "movie-this") {
+    if (process.argv.length < 4) {
+        movieTitle = "mr+nobody";
+    }
+    else {
+        for (i = 3; i < (process.argv.length - 1); i++) {
+            movieTitle = process.argv[i] + "+"
+        }
+        var lastWord = process.argv.length - 1;
+        movieTitle += process.argv[lastWord];
+    }
+    movieQueue(movieTitle);
+}
 else if (userCommand === "do-what-it-says") {
     fs.readFile("random.txt", "utf8", function(error, data) {
         if (error) {
           return console.log(error);
         }
-        console.log(data);
-      });
-    //using the fs node package, liri will take the text inside of random.txt and use it to call commands
+        var commandArr = data.split(",");
+        var userInput = commandArr[1].split('"').join('');
+
+        if (commandArr[0] === "concert-this") {
+            var concertPull = userInput.split(' ').join("+");
+            concertQueue(concertPull);
+        }
+        else if (commandArr[0] === "spotify-this-song") {
+            var spotifyPull = userInput.split(" ").join("+");
+            spotifyQueue(spotifyPull);
+        }
+        else if (commandArr[0] === "movie-this") {
+            var moviePull = userInput.split(" ").join("+");
+            movieQueue(moviePull);
+        }
+    });
 }
