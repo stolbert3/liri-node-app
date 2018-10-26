@@ -6,6 +6,11 @@ var fs = require("fs");
 var moment = require("moment");
 var Spotify = require('node-spotify-api');
 
+var spotify = new Spotify({
+    id: keys.spotify.id,
+    secret: keys.spotify.secret
+});
+
 var userCommand = process.argv[2];
 var artistName = '';
 var queryTerm = '';
@@ -36,24 +41,22 @@ function concertQueue(artistName) {
 }
 
 function spotifyQueue(queryTerm) {
-    
-    var spotify = new Spotify({
-        id: keys.spotify.id,
-        secret: keys.spotify.secret
-    });
 
-    spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-        if (err) {
-            return console.log('Error occurred: ' + err);
-        }
-        console.log("-------------------------")
-        console.log("ARTIST(S): " + JSON.parse(body).artists);
-        console.log("SONG TITLE: " + JSON.parse(body).name);
-        console.log("SONG PREVIEW: " + JSON.parse(body).preview_url);
-        console.log("ALBUM: " + JSON.parse(body).album);
-        console.log("-------------------------")
-    });
-}
+    spotify
+        .search({ type: 'track', query: queryTerm })
+        .then(function(response) {
+            console.log("-------------------------");
+            console.log("ARTIST(S): " + JSON.parse(response).artists);
+            console.log("SONG TITLE: " + JSON.parse(response).name);
+            console.log("SONG PREVIEW: " + JSON.parse(response).preview_url);
+            console.log("ALBUM: " + JSON.parse(response).album);
+            console.log("-------------------------");
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    
+};
 
 function movieQueue(movieTitle) {
 
@@ -91,7 +94,11 @@ else if (userCommand === "spotify-this-song") {
         queryTerm = 'The Sign';
     }
     else {
-        queryTerm = process.argv[3];
+        for (i = 3; i < (process.argv.length - 1); i++) {
+            queryTerm = process.argv[i] + " "
+        }
+        var lastWord = process.argv.length - 1;
+        queryTerm += process.argv[lastWord];
     };
 
     spotifyQueue(queryTerm);
