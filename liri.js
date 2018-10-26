@@ -36,12 +36,7 @@ function concertQueue(artistName) {
 }
 
 function spotifyQueue(queryTerm) {
-    //artist(s)
-    //song's name
-    //preview link of the song from spotify
-    //album that the song is from
-    //if no song is provided, program will default to "The Sign" by Ace of Base
-
+    
     var spotify = new Spotify({
         id: keys.spotify.id,
         secret: keys.spotify.secret
@@ -51,7 +46,12 @@ function spotifyQueue(queryTerm) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
-        console.log(data); 
+        console.log("-------------------------")
+        console.log("ARTIST(S): " + JSON.parse(body).artists);
+        console.log("SONG TITLE: " + JSON.parse(body).name);
+        console.log("SONG PREVIEW: " + JSON.parse(body).preview_url);
+        console.log("ALBUM: " + JSON.parse(body).album);
+        console.log("-------------------------")
     });
 }
 
