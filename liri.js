@@ -45,12 +45,25 @@ function spotifyQueue(queryTerm) {
     spotify
         .search({ type: 'track', query: queryTerm })
         .then(function(response) {
+            /*for (i=0; i<response.length; i++) {
+                var thisSong = response.tracks.items[i];
+                if (thisSong.name === queryTerm) {
+                    console.log("-------------------------");
+                    console.log("ARTIST(S): " + thisSong.artists);
+                    console.log("SONG TITLE: " + thisSong.name);
+                    console.log("SONG PREVIEW: " + thisSong.preview_url);
+                    console.log("ALBUM: " + thisSong.album);
+                    console.log("-------------------------");
+                }
+            }*/
+            var thisSong = response.tracks.items[0];
             console.log("-------------------------");
-            console.log("ARTIST(S): " + JSON.parse(response).artists);
-            console.log("SONG TITLE: " + JSON.parse(response).name);
-            console.log("SONG PREVIEW: " + JSON.parse(response).preview_url);
-            console.log("ALBUM: " + JSON.parse(response).album);
+            console.log("ARTIST(S): " + thisSong.artists.name);
+            console.log("SONG TITLE: " + thisSong.name);
+            console.log("SONG PREVIEW: " + thisSong.preview_url);
+            console.log("ALBUM: " + thisSong.album.name);
             console.log("-------------------------");
+            //console.log(response.tracks.items[0]);
         })
         .catch(function(err) {
             console.log(err);
